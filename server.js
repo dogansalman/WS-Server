@@ -10,18 +10,20 @@ io.use(socketioJwt.authorize({
 }));
 
 io.on('connection', function(socket) {
-    io.emit('connected', socket.decoded_token);
+    if (socket.decoded_token.isServer) io.emit('connected', socket.decoded_token);
 
     socket.on('notification', function (data) {
-        io.emit('notification', data);
+        if (typeof data != "object" || !data.hasOwnProperty('user_id')) return;
+        if (socket.decoded_token.id == data.user_id) io.emit('notification', data);
     });
 
     socket.on('message', function (data) {
-        io.emit('message', data);
+        if (typeof data != "object" || !data.hasOwnProperty('user_id')) return;
+        if (socket.decoded_token.id == data.user_id) io.emit('notification', data);
     });
 
     socket.on('disconnect', function () {
-        io.emit('disconnected');
+        if (socket.decoded_token.isServer) io.emit('disconnected', socket.decoded_token);
     });
 });
 
