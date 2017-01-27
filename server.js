@@ -10,7 +10,7 @@ var server = http.createServer((request, res) => {
     var headers = request.headers;
     var method = request.method;
     var url = request.url;
-    var ip = (request.connection.remoteAddress || request.socket.remoteAddress || request.connection.socket.remoteAddress);
+    var ip = (request.connection.remoteAddress);
     var body = [];
     request.on('error', function(err) {
         console.error(err);
