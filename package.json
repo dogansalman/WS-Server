@@ -1,0 +1,19 @@
+{
+  "name": "menkule-ws-server",
+  "version": "1.0.0",
+  "description": "Secret key: qQrsBccsx0KHjPOuXOYg5sMeJ1GT0uFiwDVvVBrs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dogansalman/WS-Server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dogansalman/WS-Server/issues"
+  },
+  "homepage": "https://github.com/dogansalman/WS-Server#readme"
+}
