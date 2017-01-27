@@ -10,7 +10,7 @@ var server = http.createServer((request, res) => {
     var headers = request.headers;
     var method = request.method;
     var url = request.url;
-    var ip = (request.connection.remoteAddress);
+    var ip = request.socket.remoteAddress.replace("::ffff:", "");
     var body = [];
     request.on('error', function(err) {
         console.error(err);
@@ -19,9 +19,9 @@ var server = http.createServer((request, res) => {
     }).on('end', function() {
         body = Buffer.concat(body).toString();
         if (serverIp.indexOf(ip) === -1) {
-            res.statusCode = 401;
+            res.statusCode = 400;
             res.end("Unauthorized");
-           return;
+            return;
         }
         try {
             data = JSON.parse(body);
