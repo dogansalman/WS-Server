@@ -4,13 +4,12 @@ var fs = require('fs');
 var secretKey = fs.readFileSync('.secret.key').toString();
 var clients = [];
 var io = null;
-var serverIp = ["::1", "127.0.0.1", "85.109.59.244"];
+
 
 var server = http.createServer((request, res) => {
     var headers = request.headers;
     var method = request.method;
     var url = request.url;
-    var ip = request.socket.remoteAddress.replace("::ffff:", "");
     var body = [];
     request.on('error', function(err) {
         console.error(err);
@@ -18,8 +17,8 @@ var server = http.createServer((request, res) => {
         body.push(chunk);
     }).on('end', function() {
         body = Buffer.concat(body).toString();
-        if (serverIp.indexOf(ip) === -1) {
-            res.statusCode = 400;
+        if (headers["x-secret-key"] != secretKey) {
+            res.statusCode = 401;
             res.end("Unauthorized");
             return;
         }
