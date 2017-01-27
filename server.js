@@ -1,13 +1,41 @@
 var http = require('http');
 var socketioJwt   = require("socketio-jwt");
 var fs = require('fs');
-var server = http.createServer((req, res) => {
-	res.statusCode = 404;
-	res.end('');
-});
-var io = require('socket.io')(server);
-
 var secretKey = fs.readFileSync('.secret.key').toString();
+var clients = [];
+var io = null;
+var serverIp = ["::1", "127.0.0.1", "85.109.59.244"];
+
+var server = http.createServer((request, res) => {
+    var headers = request.headers;
+    var method = request.method;
+    var url = request.url;
+    var ip = (request.connection.remoteAddress || request.socket.remoteAddress || request.connection.socket.remoteAddress);
+    var body = [];
+    request.on('error', function(err) {
+        console.error(err);
+    }).on('data', function(chunk) {
+        body.push(chunk);
+    }).on('end', function() {
+        body = Buffer.concat(body).toString();
+        if (serverIp.indexOf(ip) === -1) {
+            res.statusCode = 401;
+            res.end("Unauthorized");
+           return;
+        }
+        try {
+            data = JSON.parse(body);
+            clients.filter(s => data.user_id === "*" || s.decoded_token.id == data.user_id).forEach(s => s.emit(data.subject, data.message));
+            res.statusCode = 200;
+            res.end(JSON.stringify('OK'));
+        } catch (err) {
+            res.statusCode = 400;
+            res.end("400 - Bad request");
+        }
+    });
+});
+
+io = require('socket.io')(server);
 
 io.use(socketioJwt.authorize({
     secret: secretKey,
@@ -15,22 +43,12 @@ io.use(socketioJwt.authorize({
 }));
 
 io.on('connection', function(socket) {
-    if (socket.decoded_token.isServer) io.emit('connected', socket.decoded_token);
-
-    socket.on('notification', function (data) {
-        if (typeof data != "object" || !data.hasOwnProperty('user_id')) return;
-        if (socket.decoded_token.id == data.user_id) io.emit('notification', data);
-    });
-
-    socket.on('message', function (data) {
-        if (typeof data != "object" || !data.hasOwnProperty('user_id')) return;
-        if (socket.decoded_token.id == data.user_id) io.emit('notification', data);
-    });
+    if (clients.indexOf(socket) === -1) clients.push(socket);
 
     socket.on('disconnect', function () {
-        if (socket.decoded_token.isServer) io.emit('disconnected', socket.decoded_token);
+        var index = clients.indexOf(socket);
+        if (index !== -1) clients.splice(index ,1);
     });
 });
 
 server.listen(process.env.PORT || 9898);
-
