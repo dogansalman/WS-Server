@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/dogansalman/WS-Server/issues"
   },
-  "homepage": "https://github.com/dogansalman/WS-Server#readme"
+  "homepage": "https://github.com/dogansalman/WS-Server#readme",
+  "dependencies": {
+    "socket.io": "^1.7.2",
+    "socketio-jwt": "^4.5.0"
+  }
 }
