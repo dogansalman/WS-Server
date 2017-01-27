@@ -1,4 +1,4 @@
-var io = require('socket.io')(9898);
+var io = require('socket.io')(process.env.PORT);
 var socketioJwt   = require("socketio-jwt");
 var fs = require('fs');
 
