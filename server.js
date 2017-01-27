@@ -1,6 +1,11 @@
-var io = require('socket.io')(process.env.PORT);
+var http = require('http');
 var socketioJwt   = require("socketio-jwt");
 var fs = require('fs');
+var server = http.createServer((req, res) => {
+	res.statusCode = 404;
+	res.end('');
+});
+var io = require('socket.io')(server);
 
 var secretKey = fs.readFileSync('.secret.key').toString();
 
@@ -26,4 +31,6 @@ io.on('connection', function(socket) {
         if (socket.decoded_token.isServer) io.emit('disconnected', socket.decoded_token);
     });
 });
+
+server.listen(process.env.PORT || 9898);
 
