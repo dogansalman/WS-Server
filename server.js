@@ -12,8 +12,8 @@ io.use(socketioJwt.authorize({
 io.on('connection', function(socket) {
     io.emit('connected', socket.decoded_token);
 
-    socket.on('alert', function (data) {
-        io.emit('alert', data);
+    socket.on('notification', function (data) {
+        io.emit('notification', data);
     });
 
     socket.on('message', function (data) {
