@@ -1,4 +1,5 @@
-
+#ignored folder files
 node_modules/*
+.well-known/*
 iisnode/*
 npm-debug.log
