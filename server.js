@@ -16,21 +16,27 @@ var server = http.createServer((request, res) => {
     }).on('data', function(chunk) {
         body.push(chunk);
     }).on('end', function() {
-        body = Buffer.concat(body).toString();
-        if (headers["x-secret-key"] != secretKey) {
-            res.statusCode = 401;
-            res.end("Unauthorized");
-            return;
-        }
-        try {
-            data = JSON.parse(body);
-            clients.filter(s => data.user_id === "*" || s.decoded_token.id == data.user_id).forEach(s => s.emit(data.subject, data.message));
-            res.statusCode = 200;
-            res.end(JSON.stringify('OK'));
-        } catch (err) {
-            res.statusCode = 400;
-            res.end("400 - Bad request");
-        }
+		body = Buffer.concat(body).toString();
+		if(url.indexOf('.well-known/acme-challenge/') < 0) {
+			if (headers["x-secret-key"] != secretKey) {
+				res.statusCode = 401;
+				res.end("Unauthorized");
+				return;
+			}
+			try {
+				data = JSON.parse(body);
+				clients.filter(s => data.user_id === "*" || s.decoded_token.id == data.user_id).forEach(s => s.emit(data.subject, data.message));
+				res.statusCode = 200;
+				res.end(JSON.stringify('OK'));
+			} catch (err) {
+				res.statusCode = 400;
+				res.end("400 - Bad request");
+			}
+		} else { 
+			res.statusCode = 200;
+			res.end(fs.readFileSync('.well-known/acme-challenge/' + url.split("/").slice(-1)).toString());
+		}
+        
     });
 });
 
