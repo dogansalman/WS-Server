@@ -25,18 +25,17 @@ var server = http.createServer((request, res) => {
 			}
 			try {
 				data = JSON.parse(body);
-				clients.filter(s => data.user_id === "*" || s.decoded_token.id == data.user_id).forEach(s => s.emit(data.subject, data.message));
+				clients.filter(s => s.decoded_token.id === data.id).forEach(s => s.emit(data.subject, data.message));
 				res.statusCode = 200;
 				res.end(JSON.stringify('OK'));
 			} catch (err) {
 				res.statusCode = 400;
 				res.end("400 - Bad request");
 			}
-		} else { 
+		} else {
 			res.statusCode = 200;
 			res.end(fs.readFileSync('.well-known/acme-challenge/' + url.split("/").slice(-1)).toString());
 		}
-        
     });
 });
 
