@@ -25,7 +25,7 @@ var server = http.createServer((request, res) => {
 			}
 			try {
 				data = JSON.parse(body);
-				clients.filter(s => s.decoded_token.id === data.id).forEach(s => s.emit(data.subject, data.message));
+				clients.filter(s => s.decoded_token.id === data.user_id).forEach(s => s.emit(data.subject, data.message));
 				res.statusCode = 200;
 				res.end(JSON.stringify('OK'));
 			} catch (err) {
@@ -48,7 +48,7 @@ io.use(socketioJwt.authorize({
 
 io.on('connection', function(socket) {
     if (clients.indexOf(socket) === -1) clients.push(socket);
-
+    console.log('connected');
     socket.on('disconnect', function () {
         var index = clients.indexOf(socket);
         if (index !== -1) clients.splice(index ,1);
