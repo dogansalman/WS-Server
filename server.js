@@ -5,7 +5,6 @@ var secretKey = fs.readFileSync('.secret.key').toString();
 var clients = [];
 var io = null;
 
-
 var server = http.createServer((request, res) => {
     var headers = request.headers;
     var method = request.method;
@@ -30,7 +29,7 @@ var server = http.createServer((request, res) => {
 				res.end(JSON.stringify('OK'));
 			} catch (err) {
 				res.statusCode = 400;
-				res.end("400 - Bad request");
+				res.end("400 - Bad request catche");
 			}
 		} else {
 			res.statusCode = 200;
@@ -40,7 +39,6 @@ var server = http.createServer((request, res) => {
 });
 
 io = require('socket.io')(server);
-
 io.use(socketioJwt.authorize({
     secret: secretKey,
     handshake: true
@@ -48,7 +46,6 @@ io.use(socketioJwt.authorize({
 
 io.on('connection', function(socket) {
     if (clients.indexOf(socket) === -1) clients.push(socket);
-    console.log('connected');
     socket.on('disconnect', function () {
         var index = clients.indexOf(socket);
         if (index !== -1) clients.splice(index ,1);

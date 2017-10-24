@@ -1,5 +1,6 @@
 #ignored folder files
 node_modules/*
 .well-known/*
+.idea/*
 iisnode/*
 npm-debug.log
