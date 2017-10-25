@@ -28,7 +28,6 @@ io.on('connection', function(socket) {
 
     if(typeof socket.handshake.query.user != 'undefined' && clients.filter(s => s.handshake.query.user === data.user_id).length === 0 ){
         clients.push(socket);
-        console.log('add new socket: ' + socket.handshake.query.user);
     }  
     
     socket.on('disconnect', function () {
@@ -42,6 +41,4 @@ io.on('connection', function(socket) {
 
 });
 
-server.listen(process.env.PORT || 9898, function () {
-    console.log('listening...');
-});
+server.listen(process.env.PORT || 9898);
